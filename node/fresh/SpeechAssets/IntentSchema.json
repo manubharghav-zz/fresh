@@ -1,0 +1,21 @@
+{
+  "intents": [
+    {
+      "intent": "RecommendRecipe",
+      "slots": [
+        {
+            "name": "recipe",
+            "type": "LITERAL"
+        }
+      ]
+    },
+    {
+      "intent": "",
+      "slots": []
+    },
+    {
+      "intent": "HelpIntent",
+      "slots": []
+    }
+  ]
+}

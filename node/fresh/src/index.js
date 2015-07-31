@@ -8,10 +8,14 @@
 // would you like blah blah and blah?
 
 var RECIPES = {
-    "pasta" : ["spaghetti", "onions", "tomato sauce"],
-    "omelette" : ["eggs", "tomates", "onions"],
-    "steak": ["meat"],
-    "rum and coke" : ["rum, coke"],
+    "italian" : {
+        "pasta" : ["spaghetti", "onions", "tomato sauce"]
+    },
+    "american" : {
+        "omelette" : ["eggs", "tomates", "onions"],    
+        "steak": ["meat"],
+        "rum and coke" : ["rum, coke"]
+    }
 }
 
 var PANTRY = [
@@ -84,14 +88,17 @@ function handleRecommendRecipeIntent(session, response) {
 }
 
 function handleCuisinePrefIntent(intent, session, response) {
-    session.attributes.cuisine = intent.slots.cuisine;
+    session.attributes.cuisine = intent.slots.cuisine.value;
+    console.log(session.attributes.cuisine);
     var speechOutput = "How much time do you have to cook?";
     response.askWithCard(speechOutput, "", "fresh", speechOutput);    
 }
 
 function handleDurationPrefIntent(intent, session, response) {
-    session.attributes.duration = intent.slots.duration;
-    var speechOutput = "Would you like " + Object.keys(RECIPES).join(" or ");
+    session.attributes.duration = intent.slots.duration.value;
+    console.log(session.attributes.cuisine);
+    console.log(RECIPES[session.attributes.cuisine]);
+    var speechOutput = "Would you like " + Object.keys(RECIPES[session.attributes.cuisine]).join(" or ");
     response.askWithCard(speechOutput, "", "fresh", speechOutput);
 }
 
@@ -104,8 +111,8 @@ function handleGetRecipeDetails(intent, session, response){
 
     // if (session.attributes.stage === 1){
         console.log("intent.slots.recipe.value");
-        var ingredientList = RECIPES[intent.slots.recipe.value];
-        var missingIngredients = RECIPES[intent.slots.recipe.value].filter(function(x){ return PANTRY.indexOf(x)<0})
+        var ingredientList = RECIPES[session.attributes.cuisine][intent.slots.recipe.value];
+        var missingIngredients = RECIPES[session.attributes.cuisine][intent.slots.recipe.value].filter(function(x){ return PANTRY.indexOf(x)<0})
 
         if (missingIngredients.length > 0 ){
             orderFromFresh = " and you are missing " + missingIngredients.join(" and ") + " ... should I make an amazon fresh order?";
@@ -117,10 +124,10 @@ function handleGetRecipeDetails(intent, session, response){
                 switch (yesnoAnswer){
                     case "sure":
                     case "yes":
-                        speechOutput = " cool, your order has been placed, it will arrive in 2 hours"; // this will have to launch another app, ideally 
+                        speechOutput = " cool, your order has been placed, it will arrive before 6 tonight."; // this will have to launch another app, ideally 
                         break
                     case "no":
-                        speechOutput = " go die in a fire";
+                        speechOutput = " go die in a fire, fuck";
                         break
                 }
                 response.tellWithCard(speechOutput, repromptSpeech, "fresh", speechOutput);

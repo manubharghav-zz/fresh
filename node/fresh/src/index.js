@@ -13,13 +13,13 @@ var RECIPES = {
     },
     "american" : {
         "omelette" : ["eggs", "tomates", "onions"],    
-        "steak": ["meat"],
+        "steak": ["tenderloin, salt, pepper"],
         "rum and coke" : ["rum, coke"]
     }
 }
 
 var PANTRY = [
-    "spaghetti", "onions", "sugar", "tomato sauce", "rum", "coke"
+    "spaghetti", "onions", "sugar", "rum", "coke"
 ]
 
 var APP_ID = undefined;//replace with 'amzn1.echo-sdk-ams.app.[your-unique-value-here]';
@@ -127,7 +127,7 @@ function handleGetRecipeDetails(intent, session, response){
                         speechOutput = " cool, your order has been placed, it will arrive before 6 tonight."; // this will have to launch another app, ideally 
                         break
                     case "no":
-                        speechOutput = " go die in a fire, fuck";
+                        speechOutput = "ok bye ***";
                         break
                 }
                 response.tellWithCard(speechOutput, repromptSpeech, "fresh", speechOutput);

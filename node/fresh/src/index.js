@@ -7,11 +7,16 @@
 // how much time do you have?
 // would you like blah blah and blah?
 
-var recipes = {
+var RECIPES = {
     "pasta" : ["spaghetti", "onions", "tomato sauce"],
     "omelette" : ["eggs", "tomates", "onions"],
     "steak": ["meat"],
+    "rum and coke" : ["rum, coke"],
 }
+
+var PANTRY = [
+    "spaghetti", "onions", "sugar", "tomato sauce", "rum", "coke"
+]
 
 var APP_ID = undefined;//replace with 'amzn1.echo-sdk-ams.app.[your-unique-value-here]';
 
@@ -51,9 +56,25 @@ recipeSkill.prototype.intentHandlers = {
     },
     DurationPrefIntent: function(intent, session, response) {
         handleDurationPrefIntent(intent, session, response);
+    },
+    getRecipeIntent: function (intent, session, response) {
+        handleGetRecipeIntent(intent, session, response);
+    },
+    RecipeDetailsIntent: function (intent, session, response) {
+        handleGetRecipeDetails(intent, session, response);
+    },
+    YesNoIntent: function(){},
+    ExitIntent: function(intent, session, response){
+        handleExitIntent(intent, session, response);
     }
-}
+};
 
+recipeSkill.prototype.eventHandlers.onSessionEnded = function (sessionEndedRequest, session) {
+    console.log("onSessionEnded requestId: " + sessionEndedRequest.requestId
+        + ", sessionId: " + session.sessionId);
+
+    //Any session cleanup logic would go here.
+};
 
 function handleRecommendRecipeIntent(session, response) {
     var repromptSpeech = "";
@@ -70,13 +91,72 @@ function handleCuisinePrefIntent(intent, session, response) {
 
 function handleDurationPrefIntent(intent, session, response) {
     session.attributes.duration = intent.slots.duration;
-    var speechOutput = "Would you like " + Object.keys(recipes).join(" or ");
+    var speechOutput = "Would you like " + Object.keys(RECIPES).join(" or ");
     response.askWithCard(speechOutput, "", "fresh", speechOutput);
+}
+
+//User has chosen recipe
+function handleGetRecipeDetails(intent, session, response){
+    var speechOutput = "";
+    var repromptSpeech = "";
+    var orderFromFresh = ""; //start order from fresh intent
+    var continueCooking = ""; //start continue cooking intent
+
+    // if (session.attributes.stage === 1){
+        console.log("intent.slots.recipe.value");
+        var ingredientList = RECIPES[intent.slots.recipe.value];
+        var missingIngredients = RECIPES[intent.slots.recipe.value].filter(function(x){ return PANTRY.indexOf(x)<0})
+
+        if (missingIngredients.length > 0 ){
+            orderFromFresh = " and you are missing " + missingIngredients.join(" and ") + " ... should I make an amazon fresh order?";
+            recipeSkill.prototype.intentHandlers.YesNoIntent = function (intent, session, response){
+                var speechOutput = "";
+                var yesnoAnswer = intent.slots.yesnoAnswer.value;
+                var repromptSpeech = "Sorry, could you repeat that?";
+                console.log(recipeSkill.prototype.intentHandlers);
+                switch (yesnoAnswer){
+                    case "sure":
+                    case "yes":
+                        speechOutput = " cool, your order has been placed, it will arrive in 2 hours"; // this will have to launch another app, ideally 
+                        break
+                    case "no":
+                        speechOutput = " go die in a fire";
+                        break
+                }
+                response.tellWithCard(speechOutput, repromptSpeech, "fresh", speechOutput);
+            }            
+        } else {
+            continueCooking = " ... shall we start cooking?";
+            recipeSkill.prototype.intentHandlers.YesNoIntent = function (intent, session, response){
+                var speechOutput = "";
+                var yesnoAnswer = intent.slots.yesnoAnswer.value;
+                var repromptSpeech = "Sorry, could you repeat that?";
+                console.log(recipeSkill.prototype.intentHandlers);
+                switch (yesnoAnswer){
+                    case "sure":
+                    case "yes":
+                        speechOutput = "ok ask Anni for instructions"; // this will have to launch another app, ideally 
+                        break
+                    case "no":
+                        speechOutput = "ok hit me up when you're hungry again ... ";
+                        break
+                }
+                response.tellWithCard(speechOutput, repromptSpeech, "fresh", speechOutput);
+            }
+        }
+
+        speechOutput = "Your ingredients are " + ingredientList.join(", ") + orderFromFresh + continueCooking;
+        response.askWithCard(speechOutput, "fresh", speechOutput);
+        console.log("i'm finished asking you first q");
+}
+
+function handleExitIntent(intent, session, response){
+    var speechOutput = "Ok";
+    response.tellWithCard(speechOutput, "fresh", speechOutput);
 }
 
 // Create the handler that responds to the Alexa Request.
 exports.handler = function (event, context) {
-    // Create an instance of the cooking Skill.
     var skill = new recipeSkill();
     skill.execute(event, context);
 };

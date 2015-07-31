@@ -28,6 +28,24 @@
         ]
     },
     {
+      "intent": "RecipeDetailsIntent",
+      "slots": [
+        {
+          "name": "recipe",
+          "type": "LITERAL"
+        }
+      ]
+    },
+    {
+      "intent": "YesNoIntent",
+      "slots": [
+        {
+          "name": "yesnoAnswer",
+          "type": "LITERAL"
+        }
+      ]      
+    }
+    {
       "intent": "HelpIntent",
       "slots": []
     }

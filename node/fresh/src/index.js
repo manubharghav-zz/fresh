@@ -1,12 +1,17 @@
 // cooking step-by-step instructions 
 
-// invocation name: cooking
+// invocation name: 
 
-//dialog
+// dialog:
+// what cuisine would you like?
+// how much time do you have?
+// would you like blah blah and blah?
+
 var recipes = {
-    "pasta" : ["spaghetti", "onions", "tomato sauce"]
+    "pasta" : ["spaghetti", "onions", "tomato sauce"],
+    "omelette" : ["eggs", "tomates", "onions"],
+    "steak": ["meat"],
 }
-
 
 var APP_ID = undefined;//replace with 'amzn1.echo-sdk-ams.app.[your-unique-value-here]';
 
@@ -33,27 +38,45 @@ recipeSkill.prototype.eventHandlers.onSessionStarted = function (sessionStartedR
  * If the user launches without specifying an intent, route to the correct function.
  */
 recipeSkill.prototype.eventHandlers.onLaunch = function (launchRequest, session, response) {
-    console.log(cookingSkill onLaunch requestId: " + launchRequest.requestId + ", sessionId: " + session.sessionId);
-    getRecipeIntent(session, response);
+    console.log("cookingSkill onLaunch requestId: " + launchRequest.requestId + ", sessionId: " + session.sessionId);
+    handleRecommendRecipeIntent(session, response);
 };
 
-cookingSkill.prototype.intentHandlers = {
-    getRecipeIntent: function (intent, session, response) {
-        handleGetRecipeIntent(session, response);
+recipeSkill.prototype.intentHandlers = {
+    RecommendRecipeIntent: function (intent, session, response) {
+        handleRecommendRecipeIntent(session, response);
     },
+    CuisinePrefIntent: function(intent, session, response) {
+        handleCuisinePrefIntent(intent, session, response);
+    },
+    DurationPrefIntent: function(intent, session, response) {
+        handleDurationPrefIntent(intent, session, response);
+    }
 }
 
-function handleGetRecipeIntent(intent, session, response) {
-    var speechOutput = "";
-    var repromptSpeech = "";
 
-    speechOutput = " "; 
-    response.askWithCard(speechOutput, repromptSpeech, "cooking", speechOutput);
+function handleRecommendRecipeIntent(session, response) {
+    var repromptSpeech = "";
+    console.log("handle recommended recipe: " + session.sessionId) 
+    var speechOutput = "What cuisine would you like?";
+    response.askWithCard(speechOutput, repromptSpeech, "fresh", speechOutput);
+}
+
+function handleCuisinePrefIntent(intent, session, response) {
+    session.attributes.cuisine = intent.slots.cuisine;
+    var speechOutput = "How much time do you have to cook?";
+    response.askWithCard(speechOutput, "", "fresh", speechOutput);    
+}
+
+function handleDurationPrefIntent(intent, session, response) {
+    session.attributes.duration = intent.slots.duration;
+    var speechOutput = "Would you like " + Object.keys(recipes).join(" or ");
+    response.askWithCard(speechOutput, "", "fresh", speechOutput);
 }
 
 // Create the handler that responds to the Alexa Request.
 exports.handler = function (event, context) {
-    // Create an instance of the WiseGuy Skill.
-    var skill = new WiseGuySkill();
+    // Create an instance of the cooking Skill.
+    var skill = new recipeSkill();
     skill.execute(event, context);
 };

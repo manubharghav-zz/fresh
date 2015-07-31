@@ -1,17 +1,31 @@
 {
   "intents": [
     {
-      "intent": "RecommendRecipe",
+      "intent": "RecommendRecipeIntent",
       "slots": [
-        {
-            "name": "recipe",
-            "type": "LITERAL"
-        }
-      ]
+            {
+                "name": "meal",
+                "type": "LITERAL"
+            }
+        ]
     },
     {
-      "intent": "",
-      "slots": []
+        "intent": "CuisinePrefIntent",
+        "slots": [
+            {
+                "name": "cuisine",
+                "type": "LITERAL"
+            }
+        ]
+    },
+    {
+        "intent": "DurationPrefIntent",
+        "slots": [
+            {
+                "name": "duration",
+                "type": "LITERAL"
+            } 
+        ]
     },
     {
       "intent": "HelpIntent",

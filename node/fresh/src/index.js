@@ -63,7 +63,7 @@ recipeSkill.prototype.intentHandlers = {
     RecipeDetailsIntent: function (intent, session, response) {
         handleGetRecipeDetails(intent, session, response);
     },
-    YesNoIntent: function(){},
+    YesNoIntent: function(intent, session, response){},
     ExitIntent: function(intent, session, response){
         handleExitIntent(intent, session, response);
     }

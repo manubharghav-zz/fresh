@@ -4,11 +4,13 @@
 
 //dialog
 var RECIPES = {
-    "pasta" : ["spaghetti", "onions", "tomato sauce"]
+    "pasta" : ["spaghetti", "onions", "tomato sauce"],
+    "omlette" : ["sugar, spice, eggs, milk"],
+    "rum and coke" : ["rum, coke"]
 }
 
 var PANTRY = [
-    "spaghetti", "onions", "sugar"
+    "spaghetti", "onions", "sugar", "tomato sauce", "rum", "coke"
 ]
 
 var APP_ID = undefined;//replace with 'amzn1.echo-sdk-ams.app.[your-unique-value-here]';
@@ -35,10 +37,10 @@ recipeSkill.prototype.eventHandlers.onSessionStarted = function (sessionStartedR
 /**
  * If the user launches without specifying an intent, route to the correct function.
  */
-// recipeSkill.prototype.eventHandlers.onLaunch = function (launchRequest, session, response) {
-//     console.log(cookingSkill onLaunch requestId: " + launchRequest.requestId + ", sessionId: " + session.sessionId);
+recipeSkill.prototype.eventHandlers.onLaunch = function (launchRequest, session, response) {
+    console.log("cookingSkill onLaunch requestId: " + launchRequest.requestId + ", sessionId: " + session.sessionId);
 //     getRecipeIntent(session, response);
-// };
+};
 
 recipeSkill.prototype.eventHandlers.onSessionEnded = function (sessionEndedRequest, session) {
     console.log("onSessionEnded requestId: " + sessionEndedRequest.requestId
@@ -81,6 +83,7 @@ function handleGetRecipeDetails(intent, session, response){
             recipeSkill.prototype.intentHandlers.YesNoIntent = function (intent, session, response){
                 var speechOutput = "";
                 var yesnoAnswer = intent.slots.yesnoAnswer.value;
+                var repromptSpeech = "Sorry, could you repeat that?";
                 console.log(recipeSkill.prototype.intentHandlers);
                 switch (yesnoAnswer){
                     case "sure":
@@ -91,24 +94,25 @@ function handleGetRecipeDetails(intent, session, response){
                         speechOutput = " go die in a fire";
                         break
                 }
-                response.tellWithCard(speechOutput, "dad", speechOutput);
+                response.tellWithCard(speechOutput, repromptSpeech, "dad", speechOutput);
             }            
         } else {
             continueCooking = " ... shall we start cooking?";
             recipeSkill.prototype.intentHandlers.YesNoIntent = function (intent, session, response){
                 var speechOutput = "";
                 var yesnoAnswer = intent.slots.yesnoAnswer.value;
+                var repromptSpeech = "Sorry, could you repeat that?";
                 console.log(recipeSkill.prototype.intentHandlers);
                 switch (yesnoAnswer){
                     case "sure":
                     case "yes":
-                        speechOutput = "ok ask sjdklfjsdfkj for instructions"; // this will have to launch another app, ideally 
+                        speechOutput = "ok ask Anni for instructions"; // this will have to launch another app, ideally 
                         break
                     case "no":
-                        speechOutput = "ok hit me up when you're hungry again ... baby";
+                        speechOutput = "ok hit me up when you're hungry again ... ";
                         break
                 }
-                response.tellWithCard(speechOutput, "dad", speechOutput);
+                response.tellWithCard(speechOutput, repromptSpeech, "dad", speechOutput);
             }
         }
 

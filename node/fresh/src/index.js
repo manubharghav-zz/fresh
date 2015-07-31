@@ -12,7 +12,7 @@ var RECIPES = {
         "pasta" : ["spaghetti", "onions", "tomato sauce"]
     },
     "american" : {
-        "omelette" : ["eggs", "tomates", "onions"],    
+        "omelette" : ["eggs", "tomatoes", "onions"],    
         "steak": ["tenderloin, salt, pepper"],
         "rum and coke" : ["rum, coke"]
     }
@@ -116,6 +116,7 @@ function handleGetRecipeDetails(intent, session, response){
 
         if (missingIngredients.length > 0 ){
             orderFromFresh = " and you are missing " + missingIngredients.join(" and ") + " ... should I make an amazon fresh order?";
+            delete recipeSkill.prototype.intentHandlers.YesNoIntent;
             recipeSkill.prototype.intentHandlers.YesNoIntent = function (intent, session, response){
                 var speechOutput = "";
                 var yesnoAnswer = intent.slots.yesnoAnswer.value;
@@ -131,9 +132,11 @@ function handleGetRecipeDetails(intent, session, response){
                         break
                 }
                 response.tellWithCard(speechOutput, repromptSpeech, "fresh", speechOutput);
+                delete recipeSkill.prototype.intentHandlers.YesNoIntent;
             }            
         } else {
             continueCooking = " ... shall we start cooking?";
+            delete recipeSkill.prototype.intentHandlers.YesNoIntent;
             recipeSkill.prototype.intentHandlers.YesNoIntent = function (intent, session, response){
                 var speechOutput = "";
                 var yesnoAnswer = intent.slots.yesnoAnswer.value;
@@ -149,6 +152,7 @@ function handleGetRecipeDetails(intent, session, response){
                         break
                 }
                 response.tellWithCard(speechOutput, repromptSpeech, "fresh", speechOutput);
+                delete recipeSkill.prototype.intentHandlers.YesNoIntent;
             }
         }
 

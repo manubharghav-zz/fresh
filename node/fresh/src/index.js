@@ -5,7 +5,6 @@
 //dialog
 var RECIPES = {
     "pasta" : ["spaghetti", "onions", "tomato sauce"],
-    "omlette" : ["sugar, spice, eggs, milk"],
     "rum and coke" : ["rum, coke"]
 }
 
@@ -56,7 +55,10 @@ recipeSkill.prototype.intentHandlers = {
     RecipeDetailsIntent: function (intent, session, response) {
         handleGetRecipeDetails(intent, session, response);
     },
-    YesNoIntent: function(){}
+    YesNoIntent: function(){},
+    ExitIntent: function(intent, session, response){
+        handleExitIntent(intent, session, response);
+    }
 }
 
 function handleGetRecipeIntent(intent, session, response) {
@@ -75,6 +77,7 @@ function handleGetRecipeDetails(intent, session, response){
     var continueCooking = ""; //start continue cooking intent
 
     // if (session.attributes.stage === 1){
+        console.log("intent.slots.recipe.value");
         var ingredientList = RECIPES[intent.slots.recipe.value];
         var missingIngredients = RECIPES[intent.slots.recipe.value].filter(function(x){ return PANTRY.indexOf(x)<0})
 
@@ -122,8 +125,9 @@ function handleGetRecipeDetails(intent, session, response){
     // }
 }
 
-function handleGetAmazonFreshOrder(intent, session, response){
-    var speechOutput = "";
+function handleExitIntent(intent, session, response){
+    var speechOutput = "Ok";
+    response.tellWithCard(speechOutput, "dad", speechOutput);
 }
 
 // Create the handler that responds to the Alexa Request.
